@@ -29,7 +29,23 @@ func _ready() -> void:
 	player.set_bounds(map_rect)
 	_create_spawn_timer()
 
+#es una funcion nativa de godot 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_abrir_menu_pausa()
 
+
+func _abrir_menu_pausa() -> void:
+	var menu = load("res://Escenas/menus/pause_menu.tscn")
+	var instantiate_menu = menu.instantiate()
+	
+	# creo la capa interfaz porque sino la posicion dependeria de la camara del jugador y no saldira centrado el menu
+	var interface_layer := CanvasLayer.new()
+	add_child(interface_layer)
+	interface_layer.add_child(instantiate_menu)
+	
+	get_tree().paused = true
+	
 func _create_spawn_timer() -> void:
 	var timer := Timer.new()
 	timer.wait_time = spawn_interval

@@ -10,15 +10,18 @@ extends CharacterBody2D
 var last_direction: String = "down"  # "down", "up" o "east"
 var facing_west: bool = false
 
-
+func _ready() -> void:
+	add_to_group("player")
 func _physics_process(_delta: float) -> void:
 	# get_vector ya devuelve un vector normalizado (sin ventaja en diagonales)
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	velocity = input_dir * speed
 	move_and_slide()
 	_update_animation(input_dir)
+	
 
-
+	
+	
 func _update_animation(dir: Vector2) -> void:
 	if dir != Vector2.ZERO:
 		# El eje dominante decide hacia dónde mira (en diagonal exacta gana el horizontal)
@@ -39,7 +42,6 @@ func _play(state: String) -> void:
 	var anim := "%s_%s" % [state, last_direction]
 	if sprite.animation != anim or not sprite.is_playing():
 		sprite.play(anim)
-	add_to_group("player")
 
 
 ## Llamado desde World para fijar los límites de la cámara.
