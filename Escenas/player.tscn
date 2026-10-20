@@ -1,0 +1,283 @@
+[gd_scene format=3 uid="uid://cohldc11hmcub"]
+
+[ext_resource type="Texture2D" uid="uid://yb7r4yqcm6k8" path="res://Sprites/South_Breathing.png" id="1_xlwfv"]
+[ext_resource type="Texture2D" uid="uid://d2t0figf78ky8" path="res://Sprites/East_Breathing.png" id="2_7v5l4"]
+[ext_resource type="Texture2D" uid="uid://g4aq26icy6yk" path="res://Sprites/North_Breathing.png" id="3_b21vg"]
+[ext_resource type="Texture2D" uid="uid://dnmdhey0scvlh" path="res://Sprites/South_Walk.png" id="4_ohiiw"]
+[ext_resource type="Texture2D" uid="uid://6foqimgccxdm" path="res://Sprites/East_Walk.png" id="5_knqkl"]
+[ext_resource type="Texture2D" uid="uid://4vuiq88axyj3" path="res://Sprites/North_Walk.png" id="6_ul4kv"]
+
+[sub_resource type="GDScript" id="GDScript_oba5i"]
+script/source = "extends CharacterBody2D
+## Jugador top-down con 4 direcciones.
+## West = East espejado (flip_h).
+
+@export var speed: float = 150.0
+
+@onready var sprite: AnimatedSprite2D = $Sprite
+@onready var camera: Camera2D = $Camera
+
+var last_direction: String = \"down\"  # \"down\", \"up\" o \"east\"
+var facing_west: bool = false
+
+
+func _physics_process(_delta: float) -> void:
+	# get_vector ya devuelve un vector normalizado (sin ventaja en diagonales)
+	var input_dir := Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\")
+	velocity = input_dir * speed
+	move_and_slide()
+	_update_animation(input_dir)
+
+
+func _update_animation(dir: Vector2) -> void:
+	if dir != Vector2.ZERO:
+		# El eje dominante decide hacia dónde mira (en diagonal exacta gana el horizontal)
+		if absf(dir.x) >= absf(dir.y):
+			last_direction = \"east\"
+			facing_west = dir.x < 0.0
+		else:
+			last_direction = \"down\" if dir.y > 0.0 else \"up\"
+			facing_west = false
+		_play(\"walk\")
+	else:
+		_play(\"idle\")
+
+
+func _play(state: String) -> void:
+	# El flip solo se aplica en horizontal; arriba/abajo siempre sin flip
+	sprite.flip_h = (last_direction == \"east\" and facing_west)
+	var anim := \"%s_%s\" % [state, last_direction]
+	if sprite.animation != anim or not sprite.is_playing():
+		sprite.play(anim)
+
+
+## Llamado desde World para fijar los límites de la cámara.
+func set_camera_limits(rect: Rect2i) -> void:
+	camera.limit_left = rect.position.x
+	camera.limit_top = rect.position.y
+	camera.limit_right = rect.end.x
+	camera.limit_bottom = rect.end.y
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y717v"]
+atlas = ExtResource("1_xlwfv")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwnoe"]
+atlas = ExtResource("1_xlwfv")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r84g6"]
+atlas = ExtResource("1_xlwfv")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m87nl"]
+atlas = ExtResource("1_xlwfv")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2eo5y"]
+atlas = ExtResource("2_7v5l4")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4tf0n"]
+atlas = ExtResource("2_7v5l4")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y153w"]
+atlas = ExtResource("2_7v5l4")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6hcl0"]
+atlas = ExtResource("2_7v5l4")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ldnir"]
+atlas = ExtResource("3_b21vg")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n5uw0"]
+atlas = ExtResource("3_b21vg")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_el7rh"]
+atlas = ExtResource("3_b21vg")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kwk6x"]
+atlas = ExtResource("3_b21vg")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4wb5"]
+atlas = ExtResource("4_ohiiw")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5k7ue"]
+atlas = ExtResource("4_ohiiw")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7c4hf"]
+atlas = ExtResource("4_ohiiw")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fphui"]
+atlas = ExtResource("4_ohiiw")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k1qdr"]
+atlas = ExtResource("5_knqkl")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eqqsu"]
+atlas = ExtResource("5_knqkl")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5qs2r"]
+atlas = ExtResource("5_knqkl")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n2qbc"]
+atlas = ExtResource("5_knqkl")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_33rbj"]
+atlas = ExtResource("6_ul4kv")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gxex2"]
+atlas = ExtResource("6_ul4kv")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jjd8s"]
+atlas = ExtResource("6_ul4kv")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0k5x2"]
+atlas = ExtResource("6_ul4kv")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cnkc8"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y717v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwnoe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r84g6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m87nl")
+}],
+"loop": 1,
+"name": &"idle_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2eo5y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4tf0n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y153w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6hcl0")
+}],
+"loop": 1,
+"name": &"idle_east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ldnir")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n5uw0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_el7rh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kwk6x")
+}],
+"loop": 1,
+"name": &"idle_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n4wb5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5k7ue")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7c4hf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fphui")
+}],
+"loop": 1,
+"name": &"walk_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k1qdr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqqsu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5qs2r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n2qbc")
+}],
+"loop": 1,
+"name": &"walk_east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_33rbj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gxex2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jjd8s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0k5x2")
+}],
+"loop": 1,
+"name": &"walk_up",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qfbmi"]
+size = Vector2(26, 25)
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=407511737]
+script = SubResource("GDScript_oba5i")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=806499351]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_cnkc8")
+animation = &"idle_down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=793652565]
+shape = SubResource("RectangleShape2D_qfbmi")
+
+[node name="Camera" type="Camera2D" parent="." unique_id=111746707]
+position_smoothing_enabled = true

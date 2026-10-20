@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://blcdjrp5ntrb6"]
+
+[ext_resource type="Script" uid="uid://cwvaun0o7hxeo" path="res://Scripts/world.gd" id="1_8usl3"]
+[ext_resource type="PackedScene" uid="uid://cohldc11hmcub" path="res://Escenas/player.tscn" id="2_r16dl"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r16dl"]
+
+[node name="world" type="Node2D" unique_id=1829142873]
+script = ExtResource("1_8usl3")
+
+[node name="Background" type="ColorRect" parent="." unique_id=367362465]
+offset_left = -575.0
+offset_top = -323.0
+offset_right = 575.0
+offset_bottom = 324.0
+color = Color(0.09803922, 0.27450982, 0.26666668, 1)
+
+[node name="Walls" type="StaticBody2D" parent="." unique_id=775829097]
+physics_material_override = SubResource("PhysicsMaterial_r16dl")
+
+[node name="Player" parent="." unique_id=407511737 instance=ExtResource("2_r16dl")]
