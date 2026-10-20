@@ -1,18 +1,20 @@
 extends CharacterBody2D
-## Enemigo animado: persigue al jugador, se separa de otros enemigos
-## y es desplazado por el jugador al atravesarlo.
 
 @export var speed: float = 60.0
+@export var health: float = 3.0                  # CAMBIO
+@export var knockback_decay: float = 900.0       # CAMBIO: rapidez con la que se apaga el retroceso
 @export var separation_radius: float = 24.0
 @export var separation_strength: float = 1.0
 @export var player_push_radius: float = 22.0
 @export var player_push_strength: float = 2.5
-@export var anim_speed_variation: float = 0.15   # desincroniza las animaciones entre enemigos
+@export var anim_speed_variation: float = 0.15
 
 @onready var sprite: AnimatedSprite2D = $Sprite
 
-var player: Node2D   # lo asigna World al hacer spawn
+var player: Node2D
 var has_directions := false
+var has_west := false
+var knockback := Vector2.ZERO                    # CAMBIO
 
 
 func _ready() -> void:
@@ -21,16 +23,15 @@ func _ready() -> void:
 	if player == null:
 		player = get_tree().get_first_node_in_group("player")
 
-	# Modo 4 direcciones si existen esas animaciones; si no, usa "walk" con flip
 	has_directions = sprite.sprite_frames.has_animation("walk_down")
+	has_west = sprite.sprite_frames.has_animation("walk_west")
 
-	# Cada enemigo empieza en un frame distinto y a velocidad ligeramente distinta
 	sprite.speed_scale = 1.0 + randf_range(-anim_speed_variation, anim_speed_variation)
 	sprite.play(_pick_animation(Vector2.DOWN))
 	sprite.frame = randi() % sprite.sprite_frames.get_frame_count(sprite.animation)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:     # CAMBIO: delta
 	if not is_instance_valid(player):
 		return
 
@@ -39,7 +40,7 @@ func _physics_process(_delta: float) -> void:
 	var dir := to_player / dist if dist > 0.001 else Vector2.ZERO
 
 	var steer := dir
-	if dist < player_push_radius:
+	if dist < player_push_radius or knockback.length() > 60.0:
 		steer = Vector2.ZERO
 
 	var push := Vector2.ZERO
@@ -54,10 +55,22 @@ func _physics_process(_delta: float) -> void:
 	if dist < player_push_radius and dist > 0.001:
 		push += -dir * (1.0 - dist / player_push_radius) * player_push_strength
 
-	velocity = ((steer + push) * speed).limit_length(speed * 2.0)
+	velocity = ((steer + push) * speed).limit_length(speed * 2.0) + knockback
+	knockback = knockback.move_toward(Vector2.ZERO, knockback_decay * delta)
 	move_and_slide()
 
 	_update_animation(dir)
+
+
+func take_damage(amount: float, from_pos: Vector2, force: float) -> void:
+	health -= amount
+	var away := global_position - from_pos
+	knockback = (away.normalized() if away.length() > 0.001 else Vector2.RIGHT) * force
+	# Destello rojo
+	sprite.modulate = Color(1.0, 0.4, 0.4)
+	create_tween().tween_property(sprite, "modulate", Color.WHITE, 0.15)
+	if health <= 0.0:
+		queue_free()
 
 
 func _update_animation(dir: Vector2) -> void:
@@ -67,18 +80,21 @@ func _update_animation(dir: Vector2) -> void:
 	if sprite.animation != anim:
 		var current_frame := sprite.frame
 		sprite.play(anim)
-		sprite.frame = current_frame   # evita el "salto" al cambiar de dirección
+		sprite.frame = current_frame
 
-	# Espejado: solo cuando mira a la izquierda en la animación lateral
-	if has_directions:
-		sprite.flip_h = (anim == "walk_east" and dir.x < 0.0)
-	else:
+	if not has_directions:
 		sprite.flip_h = dir.x < 0.0
+	elif anim == "walk_east" and not has_west:
+		sprite.flip_h = dir.x < 0.0
+	else:
+		sprite.flip_h = false
 
 
 func _pick_animation(dir: Vector2) -> String:
 	if not has_directions:
 		return "walk"
 	if absf(dir.x) >= absf(dir.y):
+		if dir.x < 0.0 and has_west:
+			return "walk_west"
 		return "walk_east"
 	return "walk_down" if dir.y > 0.0 else "walk_up"

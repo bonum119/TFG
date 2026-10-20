@@ -12,10 +12,16 @@
 
 [sub_resource type="GDScript" id="GDScript_oba5i"]
 script/source = "extends CharacterBody2D
-## Jugador top-down con 4 direcciones.
-
 @export var speed: float = 150.0
-@export var attack_action: String = \"ui_accept\"   # CAMBIO: tecla de ataque
+@export var attack_action: String = \"ui_accept\"          # tecla de ataque manual
+@export var attack_range: float = 50.0                   # distancia a la que empieza a atacar
+@export var attack_cooldown: float = 0.6                 # segundos entre ataques
+@export var attack_speed_multiplier: float = 1.0         # 1.0 = sin penalización al atacar
+@export var attack_damage: float = 1.0
+@export var hit_range: float = 60.0                      # alcance real del golpe
+@export var hit_cone: float = 0.3                        # 1 = muy estrecho, -1 = alrededor completo
+@export var hit_frame: int = 1                           # frame de la animación en el que pega
+@export var knockback_force: float = 260.0
 
 @onready var sprite: AnimatedSprite2D = $Sprite
 @onready var camera: Camera2D = $Camera
@@ -26,6 +32,8 @@ var last_direction: String = \"down\"  # \"down\", \"up\", \"east\" o \"west\"
 var facing_west: bool = false
 var has_west: bool = false
 var is_attacking: bool = false
+var hit_done: bool = false
+var cooldown_left: float = 0.0
 var bounds := Rect2()
 var has_bounds := false
 
@@ -36,15 +44,23 @@ func _ready() -> void:
 	has_west = sprite.sprite_frames.has_animation(\"walk_west\") \\
 			and sprite.sprite_frames.has_animation(\"idle_west\")
 	sprite.animation_finished.connect(_on_animation_finished)
+	sprite.frame_changed.connect(_on_frame_changed)   # CAMBIO
 
 
-func _physics_process(_delta: float) -> void:
-	if Input.is_action_just_pressed(attack_action) and not is_attacking:
-		_start_attack()
+func _physics_process(delta: float) -> void:
+	cooldown_left = maxf(cooldown_left - delta, 0.0)
+	if not is_attacking and cooldown_left <= 0.0:
+		var target := _nearest_enemy_in_range()
+		if target != null:
+			_face_towards(target.global_position - global_position)
+			_start_attack()
+		elif Input.is_action_just_pressed(attack_action):
+			_start_attack()
 
 	var input_dir := Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\")
-	velocity = input_dir * speed
+	velocity = input_dir * speed * (attack_speed_multiplier if is_attacking else 1.0)
 	move_and_slide()
+
 	if has_bounds:
 		global_position = global_position.clamp(
 			bounds.position + Vector2(HALF_SIZE, HALF_SIZE),
@@ -57,15 +73,7 @@ func _physics_process(_delta: float) -> void:
 
 func _update_animation(dir: Vector2) -> void:
 	if dir != Vector2.ZERO:
-		if absf(dir.x) >= absf(dir.y):
-			if dir.x < 0.0 and has_west:
-				last_direction = \"west\"
-			else:
-				last_direction = \"east\"
-			facing_west = dir.x < 0.0
-		else:
-			last_direction = \"down\" if dir.y > 0.0 else \"up\"
-			facing_west = false
+		_face_towards(dir)
 		_play(\"walk\")
 	else:
 		_play(\"idle\")
@@ -78,21 +86,75 @@ func _play(state: String) -> void:
 		sprite.play(anim)
 
 
+func _face_towards(dir: Vector2) -> void:
+	if absf(dir.x) >= absf(dir.y):
+		last_direction = \"west\" if (dir.x < 0.0 and has_west) else \"east\"
+		facing_west = dir.x < 0.0
+	else:
+		last_direction = \"down\" if dir.y > 0.0 else \"up\"
+		facing_west = false
+
+
+func _nearest_enemy_in_range() -> Node2D:
+	var nearest: Node2D = null
+	var best := attack_range
+	for e in get_tree().get_nodes_in_group(\"enemy\"):
+		var d := global_position.distance_to(e.global_position)
+		if d < best:
+			best = d
+			nearest = e
+	return nearest
+
+
 func _start_attack() -> void:
 	var anim := \"attack_\" + last_direction
 	if not sprite.sprite_frames.has_animation(anim):
 		anim = \"attack_east\"
 		if not sprite.sprite_frames.has_animation(anim):
-			return 
-	# Espejar attack_east cuando el personaje mira al oeste
+			return
 	sprite.flip_h = (anim == \"attack_east\" and (last_direction == \"west\" or facing_west))
 	is_attacking = true
+	hit_done = false
 	sprite.play(anim)
+	cooldown_left = attack_cooldown
 
 
 func _on_animation_finished() -> void:
 	if is_attacking:
 		is_attacking = false
+
+
+func _on_frame_changed() -> void:
+	if not is_attacking or hit_done:
+		return
+	if not sprite.animation.begins_with(\"attack_\"):
+		return
+	var last_frame := sprite.sprite_frames.get_frame_count(sprite.animation) - 1
+	if sprite.frame >= mini(hit_frame, last_frame):
+		hit_done = true
+		_apply_hit()
+
+
+func _apply_hit() -> void:
+	var facing := _facing_vector()
+	for e in get_tree().get_nodes_in_group(\"enemy\"):
+		var to_e: Vector2 = e.global_position - global_position
+		var d := to_e.length()
+		if d > hit_range:
+			continue
+		# Los enemigos pegados al jugador siempre reciben el golpe
+		if d > 16.0 and facing.dot(to_e / d) < hit_cone:
+			continue
+		if e.has_method(\"take_damage\"):
+			e.take_damage(attack_damage, global_position, knockback_force)
+
+
+func _facing_vector() -> Vector2:
+	match last_direction:
+		\"east\": return Vector2.LEFT if facing_west else Vector2.RIGHT
+		\"west\": return Vector2.LEFT
+		\"up\": return Vector2.UP
+		_: return Vector2.DOWN
 
 
 func set_bounds(rect: Rect2) -> void:
