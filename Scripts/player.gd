@@ -15,6 +15,7 @@ var bounds := Rect2()
 var has_bounds := false
 
 
+
 func _ready() -> void:
 	add_to_group("player")
 	motion_mode = MOTION_MODE_FLOATING
@@ -65,3 +66,6 @@ func set_bounds(rect: Rect2) -> void:
 	camera.limit_top = int(rect.position.y)
 	camera.limit_right = int(rect.end.x)
 	camera.limit_bottom = int(rect.end.y)
+	
+	
+	

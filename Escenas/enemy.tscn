@@ -50,10 +50,13 @@ radius = 7.0
 [node name="Enemigos" type="CharacterBody2D" unique_id=663518709]
 script = ExtResource("1_1gu25")
 speed = 30.0
+health = null
+knockback_decay = null
 separation_radius = 32.0
 separation_strength = 2.0
 player_push_radius = 32.0
 player_push_strength = 7.0
+anim_speed_variation = null
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1535681469]
 texture_filter = 1

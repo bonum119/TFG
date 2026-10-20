@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://cohldc11hmcub" path="res://Escenas/player.tscn" id="2_r16dl"]
 [ext_resource type="Texture2D" uid="uid://d1xsjf1i1cjg6" path="res://Sprites/Background/Background.png" id="3_255mg"]
 [ext_resource type="PackedScene" uid="uid://bhn5xlth4vgaq" path="res://Escenas/enemy.tscn" id="4_bjp5t"]
+[ext_resource type="PackedScene" uid="uid://s6qhftm0kdaw" path="res://Escenas/Objetos_pantalla/barra_vida.tscn" id="5_k730p"]
+[ext_resource type="Script" uid="uid://co50h81vbk3le" path="res://Scripts/Objetos_pantalla/texture_progress_bar.gd" id="6_a786x"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r16dl"]
 
@@ -23,3 +25,14 @@ texture = ExtResource("3_255mg")
 [node name="Player" parent="." unique_id=407511737 instance=ExtResource("2_r16dl")]
 visibility_layer = 2
 position = Vector2(576, 324)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=922660393]
+
+[node name="TextureProgressBar" parent="CanvasLayer" unique_id=1123868317 instance=ExtResource("5_k730p")]
+offset_left = -592.0
+offset_top = -345.0
+offset_right = -552.0
+offset_bottom = -305.0
+tint_under = Color(0.9098039, 0, 0.25882354, 1)
+tint_progress = Color(0, 1, 1, 1)
+script = ExtResource("6_a786x")

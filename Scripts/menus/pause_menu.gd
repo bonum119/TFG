@@ -22,4 +22,6 @@ func _on_btn_opciones_pressed() -> void:
 
 
 func _on_btn_salir_pressed() -> void:
-	get_tree().quit()
+	get_tree().paused = false
+	queue_free() # con esto borramos el menu añadido a la pantalla principal
+	get_tree().change_scene_to_file("res://Escenas/menus/start_game_menu.tscn")

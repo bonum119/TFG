@@ -42,6 +42,8 @@ func _physics_process(delta: float) -> void:     # CAMBIO: delta
 	var steer := dir
 	if dist < player_push_radius or knockback.length() > 60.0:
 		steer = Vector2.ZERO
+		GameManager.take_life(20)
+		
 
 	var push := Vector2.ZERO
 	for other in get_tree().get_nodes_in_group("enemy"):
