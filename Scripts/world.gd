@@ -1,8 +1,9 @@
 extends Node2D
-## Mapa finito basado en Background.png, con muros, límites de cámara y spawner.
+## Mapa finito basado en Background.png: muros, límites, jugador centrado y spawner.
 
 const WALL_THICKNESS := 32.0
-const SPAWN_MARGIN := 60.0
+const SPAWN_MARGIN := 80.0   # distancia extra fuera de la pantalla
+const EDGE_PADDING := 16.0   # los enemigos no aparecen pegados al borde
 
 @export var enemy_scene: PackedScene
 @export var spawn_interval: float = 1.0
@@ -12,14 +13,20 @@ const SPAWN_MARGIN := 60.0
 @onready var walls: StaticBody2D = $Walls
 @onready var player = $Player
 
-var map_size := Vector2i(1280, 720)
+var map_rect := Rect2(0, 0, 1280, 720)
 
 
 func _ready() -> void:
+	# Rectángulo real del fondo, aunque tenga Centered u Offset
 	if background.texture:
-		map_size = Vector2i(background.texture.get_size())
+		var r := background.get_rect()
+		map_rect = Rect2(
+			background.global_position + r.position * background.global_scale,
+			r.size * background.global_scale
+		)
 	_create_walls()
-	player.set_camera_limits(Rect2i(Vector2i.ZERO, map_size))
+	player.global_position = map_rect.get_center()
+	player.set_bounds(map_rect)
 	_create_spawn_timer()
 
 
@@ -37,29 +44,43 @@ func _on_spawn_timer_timeout() -> void:
 	if get_tree().get_nodes_in_group("enemy").size() >= max_enemies:
 		return
 	var enemy := enemy_scene.instantiate()
+	enemy.player = player            # referencia directa al jugador
 	enemy.position = _random_spawn_position()
 	add_child(enemy)
 
 
-## Posición en un círculo justo fuera de la pantalla, alrededor del jugador,
-## limitada al interior del mapa.
+## Busca un punto fuera de la pantalla pero dentro del mapa.
 func _random_spawn_position() -> Vector2:
 	var radius := get_viewport_rect().size.length() / 2.0 + SPAWN_MARGIN
-	var pos: Vector2 = player.global_position + Vector2.from_angle(randf() * TAU) * radius
-	pos.x = clampf(pos.x, 0.0, float(map_size.x))
-	pos.y = clampf(pos.y, 0.0, float(map_size.y))
-	return pos
+	var inner := map_rect.grow(-EDGE_PADDING)
+	# 1) Intenta un punto en círculo alrededor del jugador que caiga dentro del mapa
+	for i in 12:
+		var pos: Vector2 = player.global_position + Vector2.from_angle(randf() * TAU) * radius
+		if inner.has_point(pos):
+			return pos
+	# 2) Si el jugador está en una esquina, cualquier punto lejano dentro del mapa
+	for i in 12:
+		var pos := Vector2(
+			randf_range(inner.position.x, inner.end.x),
+			randf_range(inner.position.y, inner.end.y)
+		)
+		if pos.distance_to(player.global_position) > 250.0:
+			return pos
+	return inner.get_center()
 
 
+## Cuatro muros fuera del rectángulo del mapa (el nodo Walls debe estar en 0,0).
 func _create_walls() -> void:
-	var w := float(map_size.x)
-	var h := float(map_size.y)
 	var t := WALL_THICKNESS
+	var x := map_rect.position.x
+	var y := map_rect.position.y
+	var w := map_rect.size.x
+	var h := map_rect.size.y
 	var defs := [
-		[Vector2(w / 2.0, -t / 2.0), Vector2(w + t * 2.0, t)],
-		[Vector2(w / 2.0, h + t / 2.0), Vector2(w + t * 2.0, t)],
-		[Vector2(-t / 2.0, h / 2.0), Vector2(t, h + t * 2.0)],
-		[Vector2(w + t / 2.0, h / 2.0), Vector2(t, h + t * 2.0)],
+		[Vector2(x + w / 2.0, y - t / 2.0), Vector2(w + t * 2.0, t)],      # arriba
+		[Vector2(x + w / 2.0, y + h + t / 2.0), Vector2(w + t * 2.0, t)],  # abajo
+		[Vector2(x - t / 2.0, y + h / 2.0), Vector2(t, h + t * 2.0)],      # izquierda
+		[Vector2(x + w + t / 2.0, y + h / 2.0), Vector2(t, h + t * 2.0)],  # derecha
 	]
 	for d in defs:
 		var shape := RectangleShape2D.new()

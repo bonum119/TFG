@@ -7,10 +7,16 @@
 
 [node name="Enemigos" type="CharacterBody2D" unique_id=663518709]
 script = ExtResource("1_1gu25")
+speed = 30.0
+separation_radius = 32.0
+separation_strength = 5.0
+player_push_radius = 32.0
+player_push_strength = 5.0
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=290526884]
 texture_filter = 1
 texture = ExtResource("2_yj12m")
 
 [node name="Collision" type="CollisionShape2D" parent="." unique_id=571369078]
+visibility_layer = 4
 shape = SubResource("CircleShape2D_bjp5t")
