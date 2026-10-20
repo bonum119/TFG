@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctc2asrxnskc4"
-path="res://.godot/imported/Sprite_quieto.png-4acee809bc2b913525e863eacd708d61.ctex"
+uid="uid://d2t0figf78ky8"
+path="res://.godot/imported/East_Breathing.png-abf84d256e65b55327652d9abb45e782.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/Sprite_quieto.png"
-dest_files=["res://.godot/imported/Sprite_quieto.png-4acee809bc2b913525e863eacd708d61.ctex"]
+source_file="res://Sprites/player/East_Breathing.png"
+dest_files=["res://.godot/imported/East_Breathing.png-abf84d256e65b55327652d9abb45e782.ctex"]
 
 [params]
 

@@ -39,6 +39,7 @@ func _play(state: String) -> void:
 	var anim := "%s_%s" % [state, last_direction]
 	if sprite.animation != anim or not sprite.is_playing():
 		sprite.play(anim)
+	add_to_group("player")
 
 
 ## Llamado desde World para fijar los límites de la cámara.

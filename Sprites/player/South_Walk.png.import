@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnmdhey0scvlh"
-path="res://.godot/imported/South_Walk.png-d55ff6182fd2707ba5c74a5767f39d1d.ctex"
+path="res://.godot/imported/South_Walk.png-de8381b4ec2ca36f6bbd6035bb2390d1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/South_Walk.png"
-dest_files=["res://.godot/imported/South_Walk.png-d55ff6182fd2707ba5c74a5767f39d1d.ctex"]
+source_file="res://Sprites/player/South_Walk.png"
+dest_files=["res://.godot/imported/South_Walk.png-de8381b4ec2ca36f6bbd6035bb2390d1.ctex"]
 
 [params]
 

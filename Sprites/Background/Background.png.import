@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g4aq26icy6yk"
-path="res://.godot/imported/North_Breathing.png-0a48e13fe82a6084fd59128aae115636.ctex"
+uid="uid://d1xsjf1i1cjg6"
+path="res://.godot/imported/Background.png-eacdde193fce433c193bd8fe63d7b3ab.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/North_Breathing.png"
-dest_files=["res://.godot/imported/North_Breathing.png-0a48e13fe82a6084fd59128aae115636.ctex"]
+source_file="res://Sprites/Background/Background.png"
+dest_files=["res://.godot/imported/Background.png-eacdde193fce433c193bd8fe63d7b3ab.ctex"]
 
 [params]
 

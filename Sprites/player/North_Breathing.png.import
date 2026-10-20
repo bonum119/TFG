@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4vuiq88axyj3"
-path="res://.godot/imported/North_Walk.png-cc8270c400f62fbc7815646e8056ac94.ctex"
+uid="uid://g4aq26icy6yk"
+path="res://.godot/imported/North_Breathing.png-19b05f00c8a4615feac0a53c709764fb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/North_Walk.png"
-dest_files=["res://.godot/imported/North_Walk.png-cc8270c400f62fbc7815646e8056ac94.ctex"]
+source_file="res://Sprites/player/North_Breathing.png"
+dest_files=["res://.godot/imported/North_Breathing.png-19b05f00c8a4615feac0a53c709764fb.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://yb7r4yqcm6k8"
-path="res://.godot/imported/South_Breathing.png-d7d3af298412251aef182b0f4864f8ca.ctex"
+uid="uid://bv8gp6mhknbb1"
+path="res://.godot/imported/Enemy_south.png-9e0ed33a42cfde4fcc5956edd7175635.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/South_Breathing.png"
-dest_files=["res://.godot/imported/South_Breathing.png-d7d3af298412251aef182b0f4864f8ca.ctex"]
+source_file="res://Sprites/enemy01/Enemy_south.png"
+dest_files=["res://.godot/imported/Enemy_south.png-9e0ed33a42cfde4fcc5956edd7175635.ctex"]
 
 [params]
 

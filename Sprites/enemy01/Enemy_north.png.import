@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6foqimgccxdm"
-path="res://.godot/imported/East_Walk.png-1574728fa1d7e7e7efa0059f3b571817.ctex"
+uid="uid://cf6dlxbgdhe7v"
+path="res://.godot/imported/Enemy_north.png-5fe0dc926ba4b340dde0595d96b3c62b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/East_Walk.png"
-dest_files=["res://.godot/imported/East_Walk.png-1574728fa1d7e7e7efa0059f3b571817.ctex"]
+source_file="res://Sprites/enemy01/Enemy_north.png"
+dest_files=["res://.godot/imported/Enemy_north.png-5fe0dc926ba4b340dde0595d96b3c62b.ctex"]
 
 [params]
 
