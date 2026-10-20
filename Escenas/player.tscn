@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cohldc11hmcub"]
 
+[ext_resource type="Texture2D" uid="uid://pl1crf6svjf4" path="res://Sprites/player/East_Attack.png" id="1_ohiiw"]
 [ext_resource type="Texture2D" uid="uid://yb7r4yqcm6k8" path="res://Sprites/player/South_Breathing.png" id="1_xlwfv"]
 [ext_resource type="Texture2D" uid="uid://d2t0figf78ky8" path="res://Sprites/player/East_Breathing.png" id="2_7v5l4"]
 [ext_resource type="Texture2D" uid="uid://g4aq26icy6yk" path="res://Sprites/player/North_Breathing.png" id="3_b21vg"]
@@ -14,6 +15,7 @@ script/source = "extends CharacterBody2D
 ## Jugador top-down con 4 direcciones.
 
 @export var speed: float = 150.0
+@export var attack_action: String = \"ui_accept\"   # CAMBIO: tecla de ataque
 
 @onready var sprite: AnimatedSprite2D = $Sprite
 @onready var camera: Camera2D = $Camera
@@ -22,7 +24,8 @@ const HALF_SIZE := 8.0   # medio tamaño del jugador para no pisar el borde
 
 var last_direction: String = \"down\"  # \"down\", \"up\", \"east\" o \"west\"
 var facing_west: bool = false
-var has_west: bool = false           
+var has_west: bool = false
+var is_attacking: bool = false
 var bounds := Rect2()
 var has_bounds := false
 
@@ -32,10 +35,13 @@ func _ready() -> void:
 	motion_mode = MOTION_MODE_FLOATING
 	has_west = sprite.sprite_frames.has_animation(\"walk_west\") \\
 			and sprite.sprite_frames.has_animation(\"idle_west\")
-	print(\"Animaciones: \", sprite.sprite_frames.get_animation_names(), \" | has_west: \", has_west)
+	sprite.animation_finished.connect(_on_animation_finished)
 
 
 func _physics_process(_delta: float) -> void:
+	if Input.is_action_just_pressed(attack_action) and not is_attacking:
+		_start_attack()
+
 	var input_dir := Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\")
 	velocity = input_dir * speed
 	move_and_slide()
@@ -44,7 +50,9 @@ func _physics_process(_delta: float) -> void:
 			bounds.position + Vector2(HALF_SIZE, HALF_SIZE),
 			bounds.end - Vector2(HALF_SIZE, HALF_SIZE)
 		)
-	_update_animation(input_dir)
+
+	if not is_attacking:
+		_update_animation(input_dir)
 
 
 func _update_animation(dir: Vector2) -> void:
@@ -70,6 +78,23 @@ func _play(state: String) -> void:
 		sprite.play(anim)
 
 
+func _start_attack() -> void:
+	var anim := \"attack_\" + last_direction
+	if not sprite.sprite_frames.has_animation(anim):
+		anim = \"attack_east\"
+		if not sprite.sprite_frames.has_animation(anim):
+			return 
+	# Espejar attack_east cuando el personaje mira al oeste
+	sprite.flip_h = (anim == \"attack_east\" and (last_direction == \"west\" or facing_west))
+	is_attacking = true
+	sprite.play(anim)
+
+
+func _on_animation_finished() -> void:
+	if is_attacking:
+		is_attacking = false
+
+
 func set_bounds(rect: Rect2) -> void:
 	bounds = rect
 	has_bounds = true
@@ -78,6 +103,22 @@ func set_bounds(rect: Rect2) -> void:
 	camera.limit_right = int(rect.end.x)
 	camera.limit_bottom = int(rect.end.y)
 "
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ryatc"]
+atlas = ExtResource("1_ohiiw")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6yh4"]
+atlas = ExtResource("1_ohiiw")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ynihy"]
+atlas = ExtResource("1_ohiiw")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e3htq"]
+atlas = ExtResource("1_ohiiw")
+region = Rect2(144, 0, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y717v"]
 atlas = ExtResource("1_xlwfv")
@@ -209,6 +250,23 @@ region = Rect2(144, 0, 48, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_cnkc8"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ryatc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6yh4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ynihy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e3htq")
+}],
+"loop": 0,
+"name": &"attack_east",
+"speed": 8.0
+}, {
 "frames": [],
 "loop": 1,
 "name": &"default",
@@ -360,7 +418,7 @@ script = SubResource("GDScript_oba5i")
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=806499351]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_cnkc8")
-animation = &"idle_west"
+animation = &"attack_east"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=793652565]
 visibility_layer = 2
