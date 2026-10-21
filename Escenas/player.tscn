@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cohldc11hmcub"]
 
-[ext_resource type="Texture2D" uid="uid://pl1crf6svjf4" path="res://Sprites/player/East_Attack.png" id="1_ohiiw"]
+[ext_resource type="Texture2D" uid="uid://k7oo3xlx85w5" path="res://Sprites/player/East_Attack.png" id="1_ohiiw"]
 [ext_resource type="Texture2D" uid="uid://yb7r4yqcm6k8" path="res://Sprites/player/South_Breathing.png" id="1_xlwfv"]
 [ext_resource type="Texture2D" uid="uid://d2t0figf78ky8" path="res://Sprites/player/East_Breathing.png" id="2_7v5l4"]
 [ext_resource type="Texture2D" uid="uid://g4aq26icy6yk" path="res://Sprites/player/North_Breathing.png" id="3_b21vg"]
@@ -327,7 +327,7 @@ animations = [{
 }],
 "loop": 0,
 "name": &"attack_east",
-"speed": 8.0
+"speed": 10.0
 }, {
 "frames": [],
 "loop": 1,
@@ -481,6 +481,8 @@ script = SubResource("GDScript_oba5i")
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_cnkc8")
 animation = &"attack_east"
+frame = 3
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=793652565]
 visibility_layer = 2

@@ -14,7 +14,7 @@ extends CharacterBody2D
 var player: Node2D
 var has_directions := false
 var has_west := false
-var knockback := Vector2.ZERO                    # CAMBIO
+var knockback := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -31,7 +31,7 @@ func _ready() -> void:
 	sprite.frame = randi() % sprite.sprite_frames.get_frame_count(sprite.animation)
 
 
-func _physics_process(delta: float) -> void:     # CAMBIO: delta
+func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
 
@@ -42,7 +42,7 @@ func _physics_process(delta: float) -> void:     # CAMBIO: delta
 	var steer := dir
 	if dist < player_push_radius or knockback.length() > 60.0:
 		steer = Vector2.ZERO
-		GameManager.take_life(20)
+		GameManager.take_life(5)
 		
 
 	var push := Vector2.ZERO
@@ -91,7 +91,7 @@ func _update_animation(dir: Vector2) -> void:
 	else:
 		sprite.flip_h = false
 
-
+#DEPENDIENDO DE DONDE MIRE MUESTRA UN SPRITE O OTRO
 func _pick_animation(dir: Vector2) -> String:
 	if not has_directions:
 		return "walk"

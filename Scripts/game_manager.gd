@@ -34,4 +34,4 @@ func reiniciar() -> void:
 	emit_signal("life_change", actual_life)
 	
 func morir() -> void:
-	print("Has muerto!!!!!")
+	pass
