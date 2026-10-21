@@ -46,6 +46,10 @@ func _physics_process(delta: float) -> void:
 		
 
 	var push := Vector2.ZERO
+	var current_tree := get_tree()
+	if current_tree == null:
+		return
+		
 	for other in get_tree().get_nodes_in_group("enemy"):
 		if other == self:
 			continue
