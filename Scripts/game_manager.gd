@@ -34,4 +34,6 @@ func reiniciar() -> void:
 	emit_signal("life_change", actual_life)
 	
 func morir() -> void:
-	pass
+	get_tree().paused = false
+	reiniciar()
+	get_tree().change_scene_to_file("res://Escenas/game_over.tscn")
