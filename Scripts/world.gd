@@ -9,6 +9,11 @@ const EDGE_PADDING := 16.0   # los enemigos no aparecen pegados al borde
 @export var spawn_interval: float = 1.0
 @export var max_enemies: int = 100
 
+#COFRES______
+@export var chest_scene: PackedScene
+@export var chest_interval: float = 30.0
+@export var max_chests: int = 3      
+
 @onready var background: Sprite2D = $Background
 @onready var walls: StaticBody2D = $Walls
 @onready var player = $Player
@@ -28,6 +33,8 @@ func _ready() -> void:
 	player.global_position = map_rect.get_center()
 	player.set_bounds(map_rect)
 	_create_spawn_timer()
+	_create_chest_timer()
+	_spawn_chest()
 
 #es una funcion nativa de godot 
 func _unhandled_input(event: InputEvent) -> void:
@@ -105,3 +112,32 @@ func _create_walls() -> void:
 		col.shape = shape
 		col.position = d[0]
 		walls.add_child(col)
+
+#COFRES
+func _create_chest_timer() -> void:
+	var timer := Timer.new()
+	timer.wait_time = chest_interval
+	timer.autostart = true
+	timer.timeout.connect(_spawn_chest)
+	add_child(timer)
+
+
+func _spawn_chest() -> void:
+	if chest_scene == null:
+		return
+	if get_tree().get_nodes_in_group("chest").size() >= max_chests:
+		return
+	var inner := map_rect.grow(-48.0)   # no aparece pegado al borde
+	var pos := inner.get_center()
+	# Busca un punto aleatorio que no esté encima del jugador
+	for i in 12:
+		var candidate := Vector2(
+			randf_range(inner.position.x, inner.end.x),
+			randf_range(inner.position.y, inner.end.y)
+		)
+		if candidate.distance_to(player.global_position) > 150.0:
+			pos = candidate
+			break
+	var chest := chest_scene.instantiate()
+	chest.position = pos
+	add_child(chest)

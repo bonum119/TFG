@@ -42,7 +42,7 @@ func _physics_process(delta: float) -> void:
 	var steer := dir
 	if dist < player_push_radius or knockback.length() > 60.0:
 		steer = Vector2.ZERO
-		GameManager.take_life(1)
+		GameManager.take_life(5)
 		
 
 	var push := Vector2.ZERO
