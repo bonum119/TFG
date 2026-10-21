@@ -29,10 +29,10 @@ position = Vector2(576, 324)
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=922660393]
 
 [node name="TextureProgressBar" parent="CanvasLayer" unique_id=1123868317 instance=ExtResource("5_k730p")]
-offset_left = -592.0
-offset_top = -345.0
-offset_right = -552.0
-offset_bottom = -305.0
+offset_left = 569.0
+offset_top = -500.0
+offset_right = 609.0
+offset_bottom = -460.0
 tint_under = Color(0.9098039, 0, 0.25882354, 1)
 tint_progress = Color(0, 1, 1, 1)
 script = ExtResource("6_a786x")

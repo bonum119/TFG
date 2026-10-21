@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://s6qhftm0kdaw"]
 
+[ext_resource type="Texture2D" uid="uid://deyqoq1fbkr40" path="res://Sprites/objetos_vida/barra_completa.png" id="1_eyl4a"]
+[ext_resource type="Texture2D" uid="uid://ddfx6ofntdcgh" path="res://Sprites/objetos_vida/barra_bordes.png" id="1_rqacn"]
+
 [node name="TextureProgressBar" type="TextureProgressBar" unique_id=1123868317]
+texture_filter = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -12,4 +16,6 @@ offset_right = 20.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
-fill_mode = 1
+scale = Vector2(10, 10)
+texture_over = ExtResource("1_rqacn")
+texture_progress = ExtResource("1_eyl4a")
