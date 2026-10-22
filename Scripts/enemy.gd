@@ -15,6 +15,7 @@ var player: Node2D
 var has_directions := false
 var has_west := false
 var knockback := Vector2.ZERO
+var damage_time: float = 0.0
 
 
 func _ready() -> void:
@@ -34,7 +35,9 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player):
 		return
-
+	if damage_time > 0.0:
+		damage_time -= delta
+		
 	var to_player := player.global_position - global_position
 	var dist := to_player.length()
 	var dir := to_player / dist if dist > 0.001 else Vector2.ZERO
@@ -42,7 +45,12 @@ func _physics_process(delta: float) -> void:
 	var steer := dir
 	if dist < player_push_radius or knockback.length() > 60.0:
 		steer = Vector2.ZERO
-		GameManager.take_life(5)
+	
+	
+	if dist < player_push_radius :
+		if damage_time <= 0.0:
+			GameManager.take_life(10)
+			damage_time = 0.8
 		
 
 	var push := Vector2.ZERO

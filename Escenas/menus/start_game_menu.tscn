@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c5kddcyppt7dh" path="res://Scripts/menus/start_game_menu.gd" id="1_8uf8s"]
 [ext_resource type="Texture2D" uid="uid://k6m22djnh8p3" path="res://Sprites/Background/Background_start.jpg" id="2_qqvy8"]
+[ext_resource type="Texture2D" uid="uid://coksn4bkxhund" path="res://Sprites/PantallaInicio/botonStart.png" id="3_qqvy8"]
 
 [node name="Menu" type="Control" unique_id=1535069561]
 layout_mode = 3
@@ -33,7 +34,7 @@ offset_right = 991.0
 offset_bottom = -62.0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 70
-text = "START"
+icon = ExtResource("3_qqvy8")
 
 [node name="Btn_quit" type="Button" parent="." unique_id=1823229217]
 layout_mode = 1
